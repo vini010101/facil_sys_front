@@ -25,7 +25,8 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       document.getElementById("message").classList.remove("text-danger");
       document.getElementById("message").classList.add("text-success");
 
-
+        // Salvar o token (se necessário)
+        localStorage.setItem("auth_token", data.token); // só se o backend retornar um token
         window.location.href = "index.html"
 
       console.log(data); // Exibe token ou resposta da API
