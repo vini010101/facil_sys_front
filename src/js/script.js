@@ -24,6 +24,10 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       document.getElementById("message").innerHTML = "Login bem-sucedido!";
       document.getElementById("message").classList.remove("text-danger");
       document.getElementById("message").classList.add("text-success");
+
+
+        window.location.href = "index.html"
+
       console.log(data); // Exibe token ou resposta da API
     } else {
       document.getElementById("message").innerHTML = data.detail || "Erro no login.";
