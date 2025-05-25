@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Facil Sys</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/style.css" />
+</head>
+<body class="bg-light">
+
+  <!-- Navbar -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Facil Sys</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="#">Sys</a></li>
+          <li class="nav-item"><a class="nav-link active" href="#">Convenios</a></li>
+        </ul>
+        <form class="d-flex" role="search" id="searchForm">
+          <input class="form-control me-2" type="search" placeholder="Pesquisar sys" aria-label="Pesquisar" id="searchInput" />
+          <button class="btn btn-outline-light" type="submit">Buscar</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <div class="container py-5">
+    <h1 class="mb-4">Links Rapidos</h1>
+
+    <div class="row g-4">
+  <div class="col-md-4 d-flex">
+    <div class="card shadow-sm h-100 w-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">Informaçoes sobre Todos os Convenios</h5>
+        <p class="card-text">Aqui voce encontra as informaçoes sobre todos os Convenios</p>
+        <div class="mt-auto">
+          <a href="#" class="btn btn-primary btn-sm">Acessar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 d-flex">
+    <div class="card shadow-sm h-100 w-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">Conteudo de Treinamento</h5>
+        <p class="card-text">Aqui voce encontra todo o Treinamento Sobre o Consigfacil.</p>
+        <div class="mt-auto">
+          <a href="#" class="btn btn-primary btn-sm">Acessar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 d-flex">
+    <div class="card shadow-sm h-100 w-100">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">Todos os Sys</h5>
+        <p class="card-text">Lista com todos os SYS em ordem crescente.</p>
+        <div class="mt-auto">
+          <a href="todos_sys.html" class="btn btn-primary btn-sm">Acessar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/src/js/index.js"></script>
+</body>
+</html>
