@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Conteúdos de Treinamento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 2rem;
+    }
+
+    #conteudos {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .conteudo-item {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .conteudo-item h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    iframe, video {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .pdf-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="conteudos">
+    <h2>Conteúdos de Treinamento</h2>
+    <!-- Os conteúdos serão carregados dinamicamente aqui -->
+  </div>
+
+  <script>
+    async function carregarConteudos() {
+      try {
+        const res = await fetch('/api/treinamentos/1/'); // ajuste a URL conforme sua API
+        const data = await res.json();
+
+        const container = document.getElementById('conteudos');
+        data.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'conteudo-item';
+
+          let html = `<h3>${item.titulo}</h3>`;
+
+          if (item.tipo === 'texto') {
+            html += `<p>${item.texto}</p>`;
+          } else if (item.tipo === 'video' && item.arquivo) {
+            html += `<video controls src="${item.arquivo}"></video>`;
+          } else if (item.tipo === 'pdf' && item.arquivo) {
+            html += `<a class="pdf-link" href="${item.arquivo}" target="_blank">Abrir PDF</a>`;
+          }
+
+          div.innerHTML = html;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar conteúdos:", err);
+      }
+    }
+
+    // Carregar os conteúdos ao abrir a página
+    carregarConteudos();
+  </script>
+
+</body>
+</html>
