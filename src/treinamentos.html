@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Conteúdos de Treinamento</title>
   <style>
     body {
@@ -9,8 +9,7 @@
       background-color: #f4f4f4;
       padding: 2rem;
     }
-
-    #conteudos {
+    #conteudos, #formulario {
       max-width: 800px;
       margin: 2rem auto;
       padding: 1rem;
@@ -18,44 +17,88 @@
       border-radius: 8px;
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
-
     .conteudo-item {
       margin-bottom: 2rem;
       padding-bottom: 1rem;
       border-bottom: 1px solid #ddd;
     }
-
     .conteudo-item h3 {
       margin-bottom: 0.5rem;
     }
-
     iframe, video {
       max-width: 100%;
       height: auto;
     }
-
     .pdf-link {
       display: inline-block;
       margin-top: 0.5rem;
       color: #007bff;
       text-decoration: none;
     }
+    form label {
+      display: block;
+      margin-top: 1rem;
+    }
+    form input, form select, form textarea, form button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+    }
+    form button {
+      margin-top: 1rem;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
+  <div id="formulario">
+    <h2>Adicionar Novo Conteúdo</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="modulo">Módulo (nome):</label>
+      <input type="text" id="modulo" name="modulo" required placeholder="ex: modulo1" />
+
+
+      <label for="titulo">Título:</label>
+      <input type="text" id="titulo" name="titulo" required />
+
+      <label for="conteudo">Conteúdo (texto):</label>
+      <textarea id="conteudo" name="conteudo" rows="4" placeholder="Apenas para tipo texto"></textarea>
+
+      <label for="arquivo">Arquivo (para vídeo ou pdf):</label>
+      <input type="file" id="arquivo" name="arquivo" />
+
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
   <div id="conteudos">
     <h2>Conteúdos de Treinamento</h2>
-    <!-- Os conteúdos serão carregados dinamicamente aqui -->
   </div>
 
   <script>
-    async function carregarConteudos() {
+    async function carregarConteudos(modulo) {
+      if (!modulo) {
+        document.getElementById('conteudos').innerHTML = '<p>Informe o módulo para carregar conteúdos.</p>';
+        return;
+      }
+
       try {
-        const res = await fetch('/api/treinamentos/1/'); // ajuste a URL conforme sua API
+        const res = await fetch('http://127.0.0.1:8000/treinamento/' + encodeURIComponent(modulo));
+        if (!res.ok) throw new Error('Erro ao buscar conteúdos');
         const data = await res.json();
 
         const container = document.getElementById('conteudos');
+        container.innerHTML = '<h2>Conteúdos de Treinamento - Módulo: ' + modulo + '</h2>';
+
+        if (data.length === 0) {
+          container.innerHTML += '<p>Nenhum conteúdo encontrado para esse módulo.</p>';
+          return;
+        }
+
         data.forEach(item => {
           const div = document.createElement('div');
           div.className = 'conteudo-item';
@@ -63,7 +106,7 @@
           let html = `<h3>${item.titulo}</h3>`;
 
           if (item.tipo === 'texto') {
-            html += `<p>${item.texto}</p>`;
+            html += `<p>${item.conteudo}</p>`;
           } else if (item.tipo === 'video' && item.arquivo) {
             html += `<video controls src="${item.arquivo}"></video>`;
           } else if (item.tipo === 'pdf' && item.arquivo) {
@@ -74,12 +117,46 @@
           container.appendChild(div);
         });
       } catch (err) {
-        console.error("Erro ao carregar conteúdos:", err);
+        document.getElementById('conteudos').innerHTML = `<p>Erro: ${err.message}</p>`;
       }
     }
 
-    // Carregar os conteúdos ao abrir a página
-    carregarConteudos();
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      const modulo = formData.get('modulo');
+      if (!modulo) {
+        alert('O campo módulo é obrigatório para carregar os conteúdos.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/treinamento/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          alert('Erro: ' + (errData.error || 'Falha no envio'));
+          return;
+        }
+
+        alert('Conteúdo enviado com sucesso!');
+        form.reset();
+
+        // Recarrega os conteúdos do módulo enviado
+        carregarConteudos(modulo);
+
+      } catch (error) {
+        alert('Erro inesperado: ' + error.message);
+      }
+    });
+
+    // Carrega conteúdos para o módulo padrão ao abrir (opcional)
+    // carregarConteudos('modulo1');
   </script>
 
 </body>
