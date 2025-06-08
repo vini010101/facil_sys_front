@@ -2,162 +2,229 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Conteúdos de Treinamento</title>
+  <title>Plataforma de Treinamento - ConsigFácil</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    header {
+      background-color: #003366;
+      padding: 1.5rem;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    #conteudos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
       padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
     }
-    #conteudos, #formulario {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
+
+    .card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card h3 {
+      margin: 0 0 1rem 0;
+      color: #003366;
+      font-size: 1.2rem;
+    }
+
+    .card button {
+      margin-top: auto;
+      padding: 0.7rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .card button:hover {
+      background-color: #0056b3;
+    }
+
+    #modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #modal-content {
       background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
     }
-    .conteudo-item {
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #ddd;
+
+    #modal-content h2 {
+      margin-top: 0;
     }
-    .conteudo-item h3 {
-      margin-bottom: 0.5rem;
+
+    #modal-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 24px;
+      color: #888;
+      cursor: pointer;
     }
-    iframe, video {
-      max-width: 100%;
-      height: auto;
+
+    video, iframe {
+      width: 100%;
+      max-height: 400px;
+      margin-top: 1rem;
     }
+
     .pdf-link {
-      display: inline-block;
-      margin-top: 0.5rem;
-      color: #007bff;
-      text-decoration: none;
-    }
-    form label {
       display: block;
       margin-top: 1rem;
-    }
-    form input, form select, form textarea, form button {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.25rem;
-    }
-    form button {
-      margin-top: 1rem;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      cursor: pointer;
+      color: #007bff;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div id="formulario">
-    <h2>Adicionar Novo Conteúdo</h2>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <label for="modulo">Módulo (nome):</label>
-      <input type="text" id="modulo" name="modulo" required placeholder="ex: modulo1" />
+  <header>
+    <h1>Plataforma de Treinamento ConsigFácil</h1>
+  </header>
 
+  <div id="conteudos"></div>
 
-      <label for="titulo">Título:</label>
-      <input type="text" id="titulo" name="titulo" required />
-
-      <label for="conteudo">Conteúdo (texto):</label>
-      <textarea id="conteudo" name="conteudo" rows="4" placeholder="Apenas para tipo texto"></textarea>
-
-      <label for="arquivo">Arquivo (para vídeo ou pdf):</label>
-      <input type="file" id="arquivo" name="arquivo" />
-
-      <button type="submit">Enviar</button>
-    </form>
-  </div>
-
-  <div id="conteudos">
-    <h2>Conteúdos de Treinamento</h2>
+  <div id="modal">
+    <div id="modal-content">
+      <div id="modal-close">&times;</div>
+      <!-- Conteúdo dinâmico entra aqui -->
+    </div>
   </div>
 
   <script>
-    async function carregarConteudos(modulo) {
-      if (!modulo) {
-        document.getElementById('conteudos').innerHTML = '<p>Informe o módulo para carregar conteúdos.</p>';
-        return;
-      }
+    async function carregarConteudos() {
+      const container = document.getElementById('conteudos');
+      const url = 'http://127.0.0.1:8000/treinamento/'; // ajuste conforme seu backend
 
       try {
-        const res = await fetch('http://127.0.0.1:8000/treinamento/' + encodeURIComponent(modulo));
+        const res = await fetch(url);
         if (!res.ok) throw new Error('Erro ao buscar conteúdos');
         const data = await res.json();
 
-        const container = document.getElementById('conteudos');
-        container.innerHTML = '<h2>Conteúdos de Treinamento - Módulo: ' + modulo + '</h2>';
-
         if (data.length === 0) {
-          container.innerHTML += '<p>Nenhum conteúdo encontrado para esse módulo.</p>';
+          container.innerHTML = '<p style="text-align:center;">Nenhum conteúdo encontrado.</p>';
           return;
         }
 
         data.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'conteudo-item';
+          const card = document.createElement('div');
+          card.className = 'card';
 
-          let html = `<h3>${item.titulo}</h3>`;
+          card.innerHTML = `
+            <h3>${item.titulo}</h3>
+            <button onclick='abrirModal(${JSON.stringify(item)})'>Acessar</button>
+          `;
 
-          if (item.tipo === 'texto') {
-            html += `<p>${item.conteudo}</p>`;
-          } else if (item.tipo === 'video' && item.arquivo) {
-            html += `<video controls src="${item.arquivo}"></video>`;
-          } else if (item.tipo === 'pdf' && item.arquivo) {
-            html += `<a class="pdf-link" href="${item.arquivo}" target="_blank">Abrir PDF</a>`;
-          }
-
-          div.innerHTML = html;
-          container.appendChild(div);
+          container.appendChild(card);
         });
       } catch (err) {
-        document.getElementById('conteudos').innerHTML = `<p>Erro: ${err.message}</p>`;
+        container.innerHTML = `<p style="text-align:center;">Erro: ${err.message}</p>`;
       }
     }
 
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
+    function abrirModal(item) {
+      const modal = document.getElementById('modal');
+      const content = document.getElementById('modal-content');
 
-      const modulo = formData.get('modulo');
-      if (!modulo) {
-        alert('O campo módulo é obrigatório para carregar os conteúdos.');
-        return;
-      }
+      const baseURL = 'http://127.0.0.1:8000'; // ajuste conforme backend real
 
-      try {
-        const response = await fetch('http://127.0.0.1:8000/treinamento/', {
-          method: 'POST',
-          body: formData,
-        });
+      let conteudoHTML = item.conteudo || '';
 
-        if (!response.ok) {
-          const errData = await response.json();
-          alert('Erro: ' + (errData.error || 'Falha no envio'));
-          return;
+      // Corrige vários formatos possíveis de caminhos de mídia do Wagtail
+      conteudoHTML = conteudoHTML
+        .replace(/src="\/media\//g, `src="${baseURL}/media/`)
+        .replace(/src='\/media\//g, `src='${baseURL}/media/`);
+
+      let arquivoUrl = item.arquivo ? (item.arquivo.startsWith('http') ? item.arquivo : baseURL + item.arquivo) : null;
+
+      let html = `
+        <div id="modal-close">&times;</div>
+        <h2>${item.titulo}</h2>
+        <div style="margin-top: 1rem; font-size: 1rem; line-height: 1.6;">
+          ${conteudoHTML}
+        </div>
+      `;
+
+      if (arquivoUrl) {
+        const ext = arquivoUrl.split('.').pop().toLowerCase();
+
+        if (ext === 'pdf') {
+          html += `
+            <div style="margin-top: 1.5rem;">
+              <a class="pdf-link" href="${arquivoUrl}" target="_blank">📄 Abrir material em PDF</a>
+            </div>
+          `;
+        } else if (['mp4', 'webm', 'ogg'].includes(ext)) {
+          html += `
+            <div style="margin-top: 2rem;">
+              <video controls style="width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);" src="${arquivoUrl}"></video>
+            </div>
+          `;
+        } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext)) {
+          html += `
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <img src="${arquivoUrl}" alt="Imagem do módulo" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);" />
+            </div>
+          `;
+        } else {
+          html += `
+            <div style="margin-top: 1.5rem;">
+              <iframe src="${arquivoUrl}" style="width: 100%; height: 400px; border: none;"></iframe>
+            </div>
+          `;
         }
-
-        alert('Conteúdo enviado com sucesso!');
-        form.reset();
-
-        // Recarrega os conteúdos do módulo enviado
-        carregarConteudos(modulo);
-
-      } catch (error) {
-        alert('Erro inesperado: ' + error.message);
       }
-    });
 
-    // Carrega conteúdos para o módulo padrão ao abrir (opcional)
-    // carregarConteudos('modulo1');
+      content.innerHTML = html;
+      modal.style.display = 'flex';
+
+      document.getElementById('modal-close').onclick = () => {
+        modal.style.display = 'none';
+      };
+    }
+
+    carregarConteudos();
   </script>
-
 </body>
 </html>
