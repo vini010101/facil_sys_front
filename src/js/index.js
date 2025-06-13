@@ -9,14 +9,25 @@ document.getElementById('searchForm').addEventListener('submit', async function 
     const response = await fetch('http://127.0.0.1:8000/novo_sys/');
     const artigos = await response.json();
 
+    // Busca exata pelo título (ex: "sys-1025")
     const artigoEncontrado = artigos.find(artigo =>
-      artigo.titulo.toLowerCase().includes(termo.toLowerCase())
+      artigo.titulo.toLowerCase() === termo.toLowerCase()
     );
 
+    const container = document.getElementById('resultadoBusca');
+    container.innerHTML = '';
+
     if (artigoEncontrado) {
-      window.location.href = `/artigo.html?id=${artigoEncontrado.id}`;
+      container.innerHTML = `
+        <div class="artigo border p-3 my-2">
+          <h3>${artigoEncontrado.titulo}</h3>
+          <p>${artigoEncontrado.conteudo}</p>
+          <p><strong>Publicado em:</strong> ${new Date(artigoEncontrado.data_criacao).toLocaleDateString()}</p>
+          ${artigoEncontrado.anexo ? `<a href="${artigoEncontrado.anexo}" class="btn btn-outline-primary" target="_blank">Ver Anexo</a>` : ''}
+        </div>
+      `;
     } else {
-      alert('Artigo não encontrado.');
+      container.innerHTML = `<div class="alert alert-warning">Artigo não encontrado.</div>`;
     }
 
   } catch (error) {
@@ -24,39 +35,3 @@ document.getElementById('searchForm').addEventListener('submit', async function 
     alert('Erro ao buscar artigo.');
   }
 });
-
-
-
- async function carregarArtigo() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-
-  if (!id) {
-    document.body.innerHTML = '<div class="container py-5"><h2>Artigo não encontrado.</h2></div>';
-    return;
-  }
-
-  try {
-    const response = await fetch('http://127.0.0.1:8000/novo_sys/');
-    const artigos = await response.json();
-    const artigo = artigos.find(a => a.id == id);
-
-    if (!artigo) {
-      document.body.innerHTML = '<div class="container py-5"><h2>Artigo não encontrado.</h2></div>';
-      return;
-    }
-
-    document.getElementById('titulo').innerText = artigo.titulo;
-    document.getElementById('data').innerText = `Publicado em: ${new Date(artigo.data_criacao).toLocaleDateString()}`;
-    document.getElementById('conteudo').innerText = artigo.conteudo;
-
-    if (artigo.anexo) {
-      const anexoDiv = document.getElementById('anexoContainer');
-      anexoDiv.innerHTML = `<a href="${artigo.anexo}" class="btn btn-outline-primary" target="_blank">Ver Anexo</a>`;
-    }
-
-  } catch (error) {
-    console.error('Erro ao carregar artigo:', error);
-    document.body.innerHTML = '<div class="container py-5"><h2>Erro ao carregar artigo.</h2></div>';
-  }
-}
