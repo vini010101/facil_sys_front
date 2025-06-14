@@ -168,7 +168,6 @@ document.getElementById('searchForm').addEventListener('submit', async function 
 
 
 // esse trecho do codigo é responsavel por fazer a requisição de login para o backend
-
 document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
