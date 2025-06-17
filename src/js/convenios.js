@@ -1,4 +1,5 @@
- async function carregarConteudos() {
+// função responsavel por buscar e exibir todo os treinamentos cadastrados no banco de dados.
+async function carregarConteudos() {
       const container = document.getElementById('conteudos');
       const url = 'http://127.0.0.1:8000/convenios/'; // ajuste conforme seu backend
 
@@ -32,7 +33,7 @@
   const modal = document.getElementById('modal');
   const content = document.getElementById('modal-content');
 
-  const baseURL = 'http://127.0.0.1:8000'; // ajuste conforme necessário
+  const baseURL = 'http://127.0.0.1:8000/convenios/'; // ajuste conforme necessário
 
   let conteudoHTML = item.conteudo || '';
 
@@ -45,10 +46,10 @@
 
   // Modal base com rolagem
   let html = `
-    <div id="modal-close" style="position: absolute; top: 10px; right: 20px; font-size: 2rem; cursor: pointer;">&times;</div>
+    <div id="modal-close" style="position: absolute; top: 15px; right: 30px; font-size: 2rem; cursor: pointer;">&times;</div>
     <div style="max-height: 80vh; overflow-y: auto; padding-right: 1rem;">
       <h2 style="margin-top: 0;">${item.nome}</h2>
-      <div style="margin-top: 1rem; font-size: 1rem; line-height: 1.8;">
+      <div style="margin-top: 1rem; font-size: 1rem; line-height: 1.9;">
         ${conteudoHTML}
       </div>
   `;
@@ -92,6 +93,5 @@
     modal.style.display = 'none';
   };
 }
-
-
-    carregarConteudos();
+carregarConteudos();
+ 
