@@ -184,9 +184,9 @@ header h1 {
 /* Card de item */
 .card {
   background-color: #ffffff;
-  border-radius: 12px;
+  border-radius: 25px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  padding: 1.8rem;
+  padding: 2.9rem;
   display: flex;
   flex-direction: column;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -344,3 +344,15 @@ h1 {
 
 
 /* */
+
+
+footer {
+  background-color: #003366;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+footer a {
+  color: #00bfff;
+  text-decoration: none;
+}

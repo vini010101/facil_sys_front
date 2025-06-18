@@ -1,38 +1,43 @@
-// trecho do codigo js responsaelvel por buscar por palavras chaves
-document.getElementById('searchForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
+// main.js (ou seu arquivo separado)
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('searchForm');
+  const input = document.getElementById('searchInput');
+  const container = document.getElementById('resultadoBusca');
 
-  const termo = document.getElementById('searchInput').value.trim();
+  if (!form || !input || !container) return; // evita erro em páginas sem o formulário
 
-  if (!termo) return;
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-  try {
-    const response = await fetch('http://127.0.0.1:8000/novo_sys/');
-    const artigos = await response.json();
+    const termo = input.value.trim();
+    if (!termo) return;
 
-    // Busca exata pelo título (ex: "sys-1025")
-    const artigoEncontrado = artigos.find(artigo =>
-      artigo.titulo.toLowerCase() === termo.toLowerCase()
-    );
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/novo_sys/?q=${encodeURIComponent(termo)}`);
+      const artigos = await response.json();
 
-    const container = document.getElementById('resultadoBusca');
-    container.innerHTML = '';
+      container.innerHTML = ''; // limpa os resultados anteriores
 
-    if (artigoEncontrado) {
-      container.innerHTML = `
-        <div class="artigo border p-3 my-2">
-          <h3>${artigoEncontrado.titulo}</h3>
-          <p>${artigoEncontrado.conteudo}</p>
-          <p><strong>Publicado em:</strong> ${new Date(artigoEncontrado.data_criacao).toLocaleDateString()}</p>
-          ${artigoEncontrado.anexo ? `<a href="${artigoEncontrado.anexo}" class="btn btn-outline-primary" target="_blank">Ver Anexo</a>` : ''}
-        </div>
-      `;
-    } else {
-      container.innerHTML = `<div class="alert alert-warning">Artigo não encontrado.</div>`;
+      if (artigos.length > 0) {
+        artigos.forEach(artigo => {
+          container.innerHTML += `
+            <div class="artigo border p-3 my-2">
+              <h3>${artigo.titulo}</h3>
+              <p>${artigo.conteudo}</p>
+              <p><strong>Categoria:</strong> ${artigo.categoria}</p>
+              <p><strong>Autor:</strong> ${artigo.autor || 'Anônimo'}</p>
+              <p><strong>Publicado em:</strong> ${new Date(artigo.data_criacao).toLocaleDateString()}</p>
+              ${artigo.anexo ? `<a href="${artigo.anexo}" class="btn btn-outline-primary" target="_blank">Ver Anexo</a>` : ''}
+            </div>
+          `;
+        });
+      } else {
+        container.innerHTML = `<div class="alert alert-warning">Nenhum artigo encontrado com esse termo.</div>`;
+      }
+
+    } catch (error) {
+      console.error('Erro ao buscar artigos:', error);
+      alert('Erro ao buscar artigos.');
     }
-
-  } catch (error) {
-    console.error('Erro ao buscar artigo:', error);
-    alert('Erro ao buscar artigo.');
-  }
+  });
 });
