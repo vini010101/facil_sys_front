@@ -1,5 +1,3 @@
-// resultado_busca.js
-
 /**
  * Busca artigos no backend conforme termo informado
  * @param {string} termo Texto a buscar
@@ -35,14 +33,61 @@ function renderizarArtigos(artigos, container, termo = '') {
 
   artigos.forEach(artigo => {
     container.innerHTML += `
-      <div class="artigo border p-3 my-2">
-        <h3>${artigo.titulo}</h3>
-        <p>${artigo.conteudo}</p>
-        <p><strong>Categoria:</strong> ${artigo.categoria}</p>
-        <p><strong>Autor:</strong> ${artigo.autor || 'Anônimo'}</p>
-        <p><strong>Publicado em:</strong> ${new Date(artigo.data_criacao).toLocaleDateString()}</p>
+      <div class="artigo border rounded p-4 my-3 shadow-sm bg-light">
+        <h3 class="mb-3">${artigo.titulo}</h3>
+
+        <section class="mb-3" style="white-space: pre-line;">
+          ${artigo.conteudo}
+        </section>
+
+        <ul class="list-unstyled mb-3">
+          <li><strong>Categoria:</strong> ${artigo.categoria}</li>
+          <li><strong>Autor:</strong> ${artigo.autor || 'Anônimo'}</li>
+          <li><strong>Publicado em:</strong> ${new Date(artigo.data_criacao).toLocaleDateString()}</li>
+        </ul>
+
         ${artigo.anexo ? `<a href="${artigo.anexo}" class="btn btn-outline-primary" target="_blank">Ver Anexo</a>` : ''}
       </div>
     `;
   });
 }
+
+// Código para ativar a busca no formulário
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('searchForm');
+  const input = document.getElementById('searchInput');
+  const resultados = document.getElementById('resultados');
+
+  // Remove 'q' vazio da URL
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('q') && params.get('q').trim() === '') {
+    params.delete('q');
+    const url = new URL(window.location);
+    url.search = params.toString();
+    window.history.replaceState({}, document.title, url.toString());
+  }
+
+  
+
+  // Se tiver termo 'q' na URL, executa busca automática
+  const termoUrl = params.get('q');
+  if (termoUrl && termoUrl.trim() !== '') {
+    input.value = termoUrl;
+    buscarArtigos(termoUrl).then(artigos => {
+      renderizarArtigos(artigos, resultados, termoUrl);
+    });
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const termo = input.value.trim();
+    if (!termo) {
+      resultados.innerHTML = '<div class="alert alert-warning">Digite um termo para buscar.</div>';
+      return;
+    }
+
+    const artigos = await buscarArtigos(termo);
+    renderizarArtigos(artigos, resultados, termo);
+  });
+});
