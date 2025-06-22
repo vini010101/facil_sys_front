@@ -55,6 +55,18 @@ body {
   background-color: #062a82;
 }
 
+.navbar .nav-link {
+  color: #ffffff;         /* Branco puro para contraste no fundo azul */
+  font-weight: 700;       /* Negrito para força visual */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Sombra sutil para destaque */
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #4670e2;        /* Amarelo vivo (bootstrap) no hover */
+  text-decoration: underline;
+}
 
 .logo-navbar {
   width: 60px;
@@ -342,17 +354,33 @@ h1 {
 }
 
 
-
-/* */
-
-
-footer {
-  background-color: #003366;
-  color: white;
+.footer {
+  background-color: #0d6efd;  /* cor azul bootstrap */
+  color: #fff;
   text-align: center;
-  padding: 1rem;
+  padding: 1rem 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.15);
+  z-index: 1030;
 }
-footer a {
-  color: #00bfff;
+
+.footer-link {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.footer-link:hover,
+.footer-link:focus {
+  color: #fff;  /* amarelo bootstrap para contraste */
   text-decoration: none;
 }
+
+body {
+  padding-bottom: 50px; /* evitar conteúdo atrás do footer */
+}
+
+
